@@ -8,6 +8,8 @@ from vocode.streaming.telephony.config_manager.redis_config_manager import (
 from vocode.streaming.models.agent import ChatGPTAgentConfig
 from vocode.streaming.models.message import BaseMessage
 from vocode.streaming.telephony.server.base import InboundCallConfig, TelephonyServer
+from vocode.streaming.models.transcriber import AssemblyAITranscriberConfig
+from vocode.streaming.models.synthesizer import GoogleSynthesizerConfig
 
 from speller_agent import SpellerAgentFactory
 import sys
@@ -47,6 +49,12 @@ telephony_server = TelephonyServer(
     inbound_call_configs=[
         InboundCallConfig(
             url="/inbound_call",
+            transcriber_config=AssemblyAITranscriberConfig.from_telephone_input_device(
+                api_key=os.environ["ASSEMBLY_AI_KEY"]
+            ),
+            synthesizer_config=GoogleSynthesizerConfig.from_telephone_output_device(
+                api_key=os.environ["GOOGLE_SPEECH_KEY"]
+            ),
             agent_config=ChatGPTAgentConfig(
                 initial_message=BaseMessage(text="What up"),
                 prompt_preamble="Have a pleasant conversation about life",
